@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "331708644926",
+    "firebase_url": "https://tienda-productos-b7ff7-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tienda-productos-b7ff7",
+    "storage_bucket": "tienda-productos-b7ff7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331708644926:android:4328bc5a21c1edaeac5b6f",
+        "android_client_info": {
+          "package_name": "com.example.app_tienda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM_IcYBY9SasOKsVAFoCrkZPY_OZ8Vclg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
