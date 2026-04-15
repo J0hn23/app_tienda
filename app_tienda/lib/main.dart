@@ -1,5 +1,8 @@
 import 'package:app_tienda/firebase_options.dart';
+import 'package:app_tienda/pantallas/formularioRegistro.dart';
+import 'package:app_tienda/pantallas/productoPantalla.dart';
 import 'package:app_tienda/providers/providerAutorizacionFireBase.dart';
+import 'package:app_tienda/servicios/productosServicioFirebase.dart';
 import 'package:flutter/material.dart';
 import 'package:app_tienda/pantallas/pantallas.dart';
 import 'package:provider/provider.dart';
@@ -29,8 +32,10 @@ class AppState extends StatelessWidget {
     return MultiProvider(
 
       providers:[
-          ChangeNotifierProvider(create: (_) => ProviderAutorizacionFirebase(),) //este es el provider que sera escuchado por la calase que diga abajo
-
+          ChangeNotifierProvider(create: (_) => ProviderAutorizacionFirebase(),),
+          ChangeNotifierProvider(create:  (_) => ProductoServicioFirebase(),)
+        
+          
       ],
       child: MyApp(), //esta es la clase que tendra acceso a el , es decir toda la app
     );
@@ -47,7 +52,8 @@ class MyApp extends StatelessWidget {
       routes: {
         'login': (_) => LoginPantalla(),
         'home': (_) => HomePantalla(),
-        
+        'registro': (_) => RegistroPantalla(),
+        'producto': (_) => ProductoPantalla(),         
       },
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: const Color.fromARGB(255, 207, 238, 171),

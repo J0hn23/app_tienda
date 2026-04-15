@@ -1,0 +1,22 @@
+{
+  "productos": {
+    "a1": {
+      "disponible": true,
+      "imagen": "https://m.media-amazon.com/images/I/81Pt84sCTWL._AC_SL1500_.jpg",
+      "nombre": "camiseta",
+      "precio": 20
+    },
+    "a2": {
+      "disponible": true,
+      "imagen": "https://m.media-amazon.com/images/I/71N5CwpUuyL._AC_SY575_.jpg",
+      "nombre": "zapatillas",
+      "precio": 15
+    },
+    "a3": {
+      "disponible": true,
+      "imagen": "https://m.media-amazon.com/images/I/511pAl9G2gL._AC_SL1500_.jpg",
+      "nombre": "gafas",
+      "precio": 10
+    }
+  }
+}

@@ -21,4 +21,18 @@ class ProviderAutorizacionFirebase extends ChangeNotifier {
   Future<void> logout() async {
     await _autorizacionDelServicio.logout();
   }
+
+  Future<void> register(String email, String password) async {
+    isLoading = true;
+    notifyListeners();
+
+   
+      await _autorizacionDelServicio.register(email, password);
+
+   
+    isLoading = false;
+    notifyListeners();
+  }
+
+
 }

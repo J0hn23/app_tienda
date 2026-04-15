@@ -17,4 +17,14 @@ class AutentificacionServicioFirebase {
   }
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+
+  Future<User?> register(String email, String password) async {
+  final credential = await _auth.createUserWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
+  return credential.user;
+}
+
 }
