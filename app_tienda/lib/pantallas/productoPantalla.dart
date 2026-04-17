@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:app_tienda/providers/providerFormulario.dart';
 import 'package:app_tienda/servicios/productosServicioFirebase.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProductoPantalla extends StatelessWidget {
@@ -7,136 +10,61 @@ class ProductoPantalla extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 135, 228, 154),
-      appBar: AppBar(
-        title: Text('Detalle del producto'),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        leading: IconButton(
-          icon: Icon(Icons.logout),
-          onPressed: () async {
-            Navigator.pop(context);
-          },
-        ),
+    final productoServicioFirebase = Provider.of<ProductoServicioFirebase>(
+      context,
+    );
+
+    return ChangeNotifierProvider(
+      create: (_) => ProviderFormularioProducto(
+        productoServicioFirebase.productoSeleccionado,
       ),
-      body: ProductoForm(),
+      child: _ProductoPantalla(
+        productoServicioFirebase: productoServicioFirebase,
+      ),
     );
   }
 }
+Future<void> seleccionImagen(BuildContext context) async {
 
-class ProductoForm extends StatelessWidget {
-  ProductoForm({super.key});
+  final provider = Provider.of<ProviderFormularioProducto>(context, listen: false);
 
-  final _formKey = GlobalKey<FormState>();
+  final picker = ImagePicker();
+  final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+
+  if (photo == null) return;
+
+  provider.actualizarImagen(photo.path);
+}
+class _ProductoPantalla extends StatelessWidget {
+    const
+  _ProductoPantalla({super.key, required this.productoServicioFirebase});
+
+  final ProductoServicioFirebase productoServicioFirebase;
 
   @override
   Widget build(BuildContext context) {
-    final providerProductoFirebase = Provider.of<ProductoServicioFirebase>(
-      context,
-    );
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
+      appBar: AppBar(
+        title: Text('Producto'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+            //productoServicioFirebase.clearSelectedImage();
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16), //
           child: Column(
             children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 400,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Center(
-                      child: conseguirImagen(providerProductoFirebase),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 20, 107, 27),
-                        foregroundColor: const Color.fromARGB(
-                          255,
-                          95,
-                          192,
-                          103,
-                        ),
-                        elevation: 5,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 10,
-                        ),
-                        minimumSize: Size(50, 30),
-                      ),
-                      onPressed: () {
-                        conseguirImagen(providerProductoFirebase);
-                      },
-
-                      child: Text("Añadir imagen"),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 30),
-
-              TextFormField(
-                controller: TextEditingController(
-                  text: providerProductoFirebase.productoSeleccionado.nombre,
-                ),
-                style: TextStyle(
-                  fontSize: 25,
-                  color: const Color.fromARGB(255, 3, 4, 12),
-                ),
-                decoration: InputDecoration(
-                  labelText: "Nombre del producto",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-
-              SizedBox(height: 15),
-
-              TextFormField(
-                controller: TextEditingController(
-                  text: providerProductoFirebase.productoSeleccionado.precio
-                      .toString(),
-                ),
-                style: TextStyle(
-                  fontSize: 25,
-                  color: const Color.fromARGB(255, 1, 1, 2),
-                ),
-                decoration: InputDecoration(
-                  labelText: "Precio",
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-
               SizedBox(height: 20),
-
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 20, 107, 27),
-                    foregroundColor: const Color.fromARGB(255, 95, 192, 103),
-                    elevation: 5,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    minimumSize: Size(60, 40),
-                  ),
-                  onPressed: () {
-                    // TODO: subir datos
-                  },
-                  child: Text("Subir producto"),
-                ),
-              ),
+              _ImagenProducto(context,productoServicioFirebase),
+              SizedBox(height: 20),
+              _FormularioProducto(context,productoServicioFirebase),
+              SizedBox(height: 20),
+              _BotonesProducto(context,productoServicioFirebase),
             ],
           ),
         ),
@@ -144,13 +72,134 @@ class ProductoForm extends StatelessWidget {
     );
   }
 
-  Image conseguirImagen(var providerProductoFirebase) {
-    return providerProductoFirebase.productoSeleccionado.imagen != null &&
-            providerProductoFirebase.productoSeleccionado.imagen != ''
-        ? Image.network(
-            providerProductoFirebase.productoSeleccionado.imagen!,
-            fit: BoxFit.cover,
-          )
-        : Image.asset('assets/interrogacion.gif', fit: BoxFit.cover);
+  Widget _ImagenProducto(BuildContext context, ProductoServicioFirebase productoServicioFirebase) {
+    final formularioProducto = Provider.of<ProviderFormularioProducto>(context);
+    final tempProduct = formularioProducto.tempProducto;
+
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          height: 400,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: construirImagen(tempProduct.imagen),
+          ),
+        ),
+        Positioned(
+          bottom: 10,
+          right: 10,
+          child: ElevatedButton(
+            onPressed: () async {
+              await seleccionImagen(context);
+            },
+            child: const Text("Cambiar imagen"),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _FormularioProducto(BuildContext context, ProductoServicioFirebase productoServicioFirebase) {
+    final formularioProducto = Provider.of<ProviderFormularioProducto>(context);
+    final tempProduct = formularioProducto.tempProducto;
+
+    return Form(
+      key: formularioProducto.formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            initialValue: tempProduct.nombre,
+            onChanged: (value) => tempProduct.nombre = value,
+
+            decoration: InputDecoration(
+              labelText: "Nombre",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          SizedBox(height: 15),
+          TextFormField(
+            initialValue: tempProduct.precio.toString(),
+            onChanged: (value) => tempProduct.precio = int.tryParse(value) ?? 0,
+            decoration: InputDecoration(
+              labelText: "Precio",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _BotonesProducto(BuildContext context, ProductoServicioFirebase productoServicioFirebase) {
+    final formularioProducto = Provider.of<ProviderFormularioProducto>(context);
+
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () async {
+                print(formularioProducto.tempProducto.imagen);
+                if (!formularioProducto.isValidForm()) return;
+
+                final productoServicioFirebase =
+                    Provider.of<ProductoServicioFirebase>(context, listen: false);
+
+                final respuesta = await productoServicioFirebase
+                    .saveOrCreateProduct(formularioProducto.tempProducto);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Producto guardado ID: $respuesta')),
+                );
+
+                Navigator.pop(context);
+              },
+            child: Text("Guardar cambios"),
+          ),
+        ),
+        SizedBox(height: 10),
+      ],
+    );
+  }
+
+
+
+ Future<void> seleccionImagen(BuildContext context) async {
+  final formularioProducto =
+      Provider.of<ProviderFormularioProducto>(context, listen: false);
+
+  final picker = ImagePicker();
+  final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+
+  if (photo == null) return;
+
+  formularioProducto.actualizarImagen(photo.path); // ✅ correcto
+}
+
+  Widget construirImagen(String? url) {
+    if (url == null || url.isEmpty) {
+      return const Text("Sin imagen");
+    }
+
+    if (url.startsWith('http')) {
+      return Image.network(url, fit: BoxFit.cover);
+      print('Imagen desde URL: $url');
+    }
+
+    if (url.startsWith('/data') || url.startsWith('/storage')) {
+      return Image.file(File(url), fit: BoxFit.cover);
+      print('Imagen data');
+    }
+
+    if (url.startsWith('assets')) {
+      return Image.asset(url, fit: BoxFit.cover);
+      print('Imagen asset');
+    }
+
+    return const Text("Imagen no válida");
   }
 }

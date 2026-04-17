@@ -21,7 +21,7 @@ class LoginPantalla extends StatelessWidget {
               'Bienvenido a tu tienda',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 150),
+            SizedBox(height: 125),
             TextField(
               controller: email,
               keyboardType: TextInputType.emailAddress,
@@ -31,7 +31,7 @@ class LoginPantalla extends StatelessWidget {
                 hintText: 'paco@paco.es',
               ),
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 75),
             TextField(
               controller: pass,
               obscureText: true,
@@ -42,7 +42,7 @@ class LoginPantalla extends StatelessWidget {
                 hintText: 'paco123',
               ),
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 75),
             ElevatedButton(
               onPressed: () async {
                 try {

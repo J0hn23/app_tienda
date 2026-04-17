@@ -155,8 +155,8 @@ class _Disponibilidad extends StatelessWidget {
       decoration: BoxDecoration(
         color: available == true ? Colors.indigo : Colors.red,
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
+          bottomRight: Radius.circular(25),
+          topLeft: Radius.circular(25),
         ),
       ),
       child: FittedBox(
