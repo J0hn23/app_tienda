@@ -112,7 +112,12 @@ class _ProductoPantalla extends StatelessWidget {
           TextFormField(
             initialValue: tempProduct.nombre,
             onChanged: (value) => tempProduct.nombre = value,
-
+              validator: (value) {
+                if (value == null || value.isEmpty || value.length < 3 || value.length > 30) {
+                  return 'El nombre es obligatorio y debe tener entre 3 y 30 caracteres';
+                }
+                return null;
+              },
             decoration: InputDecoration(
               labelText: "Nombre",
               border: OutlineInputBorder(),
@@ -122,12 +127,33 @@ class _ProductoPantalla extends StatelessWidget {
           TextFormField(
             initialValue: tempProduct.precio.toString(),
             onChanged: (value) => tempProduct.precio = int.tryParse(value) ?? 0,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'El precio es obligatorio';
+              }
+              final precio = int.tryParse(value);
+              if (precio == null || precio <= 0) {
+                return 'El precio debe ser un número positivo';
+              }
+              return null;
+            },
             decoration: InputDecoration(
               labelText: "Precio",
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.number,
           ),
+          SwitchListTile(
+            title: Text('Disponible'),
+            value: tempProduct.disponible ?? false,
+
+            onChanged: (value) {
+              tempProduct.disponible = value;
+              formularioProducto.toggleDisponible(value);
+            },
+            activeThumbColor: const Color.fromARGB(255, 131, 163, 132),        
+            activeTrackColor: const Color.fromARGB(255, 79, 146, 77), 
+          )
         ],
       ),
     );
@@ -177,7 +203,7 @@ class _ProductoPantalla extends StatelessWidget {
 
   if (photo == null) return;
 
-  formularioProducto.actualizarImagen(photo.path); // ✅ correcto
+  formularioProducto.actualizarImagen(photo.path); 
 }
 
   Widget construirImagen(String? url) {

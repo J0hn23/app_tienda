@@ -44,7 +44,7 @@ class ProductoServicioFirebase extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 🔥 GUARDAR O CREAR
+  
   Future<String?> saveOrCreateProduct(Producto producto) async {
     isSaving = true;
     notifyListeners();
@@ -61,7 +61,7 @@ class ProductoServicioFirebase extends ChangeNotifier {
     return producto.id;
   }
 
-  // 🔥 ACTUALIZAR PRODUCTO
+
   Future<String> updateProduct(Producto producto) async {
     final url = Uri.parse('$_baseUrl/productos/${producto.id}.json');
 
@@ -82,7 +82,7 @@ class ProductoServicioFirebase extends ChangeNotifier {
     return producto.id!;
   }
 
-  // 🔥 CREAR PRODUCTO
+  
   Future<String> createProduct(Producto producto) async {
     final url = Uri.parse('$_baseUrl/productos.json');
 

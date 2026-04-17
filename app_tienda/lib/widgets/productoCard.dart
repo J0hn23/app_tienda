@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_tienda/modelos/producto.dart';
 import 'package:flutter/material.dart';
 
@@ -47,6 +49,8 @@ BoxDecoration _bordeCarta() => BoxDecoration(
         );
 
 
+
+
 class _FondoWidget extends StatelessWidget {
   final String? url;
 
@@ -54,20 +58,51 @@ class _FondoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget imagenWidget=Container();
+
+    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(25),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         height: 400,
-        child: url==null 
-        ? Image(image:AssetImage('assets/jar-loading.gif'), fit: BoxFit.cover )
-        :FadeInImage(
-          placeholder: AssetImage('assets/jar-loading.gif'),
-          image: NetworkImage(url!),
-          fit: BoxFit.cover,
-        ),
+        child: controladorImagen(imagenWidget, url),
       ),
     );
+  }
+
+   Widget controladorImagen(Widget imagenWidget, String? url) {
+
+if (url == null || url!.isEmpty) {
+      imagenWidget = Image.asset(
+        'assets/jar-loading.gif',
+        fit: BoxFit.cover,
+      );
+
+    } else if (url!.startsWith('http')) {
+      imagenWidget = FadeInImage(
+        placeholder: const AssetImage('assets/jar-loading.gif'),
+        image: NetworkImage(url!),
+        fit: BoxFit.cover,
+      );
+
+    } else if (url!.startsWith('/data') || url!.startsWith('file://')) {
+      imagenWidget = Image.file(
+        File(url!.replaceFirst('file://', '')),
+        fit: BoxFit.cover,
+      );
+
+    } else if (url!.startsWith('assets')) {
+      imagenWidget = Image.asset(
+        url!,
+        fit: BoxFit.cover,
+      );
+
+    } else {
+      imagenWidget = const Text("Imagen no válida");
+    }
+    return imagenWidget;
   }
 }
 
@@ -104,6 +139,10 @@ class _DetallesProducto extends StatelessWidget {
       ),
     );
   }
+
+ 
+
+
 }
 
 class _EtiquetaPrecio extends StatelessWidget {

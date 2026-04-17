@@ -21,7 +21,7 @@ class LoginPantalla extends StatelessWidget {
               'Bienvenido a tu tienda',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 125),
+            SizedBox(height: 100),
             TextField(
               controller: email,
               keyboardType: TextInputType.emailAddress,
